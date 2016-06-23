@@ -23,8 +23,10 @@ bool animation = true;
 GLfloat xRotated, yRotated, zRotated;
 GLuint R, G, B = 0;
 
+//ilosc kolorow
+const int csize = 7;
 //kolory dla obiektow
-int4 colors[6];
+int4 colors[csize];
 
 unsigned int vertVBO = 0, normalVBO = 0;
 struct cudaGraphicsResource *cudaVertVBO = NULL, *cudaNormalVBO = NULL;
@@ -102,7 +104,7 @@ void initialize()
 	GLfloat mat_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat mat_shininess[] = { 50.0f };
 	GLfloat light_position[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-	randCol(colors, 6);
+	randCol(colors, csize);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -278,8 +280,11 @@ void display()
 	drawGlutObject(1, 0.5, 0.0, 0.0, -3.5, colors[0]);
 	drawGlutObject(2, 0.5, 1.0, 0.0, -3.5, colors[1]);
 	drawGlutObject(3, 0.5, -1.0, 1.0, -2.5, colors[2]);
-	
-
+	drawGlutObject(4, 0.5, 1.0, 1.0, -4.5, colors[3]);
+	drawGlutObject(5, 0.5, -1.0, -1.0, -4.5, colors[4]);
+	drawGlutObject(6, 0.5, -1.0, 2.0, -3.5, colors[5]);
+	drawGlutObject(7, 0.5, 0.5, 1.0, -7.5, colors[6]);
+	drawGlutObject(8, -0.5, 0.5, -1.0, -7.5, colors[6]);
 	// PBO.
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, 0);
@@ -309,6 +314,8 @@ void display()
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
 	glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
+	
+
 	glutSwapBuffers();
 }
 
@@ -331,12 +338,12 @@ void keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case  'q': R += 1; break;
-	case  'a': R -= 1; break;
-	case  'w': G += 1; break;
-	case  's': G -= 1; break;
-	case  'e': B += 1; break;
-	case  'd': B -= 1; break;
+	case  'q': (R < 255) ? R += 1 : 255; break;
+	case  'a': (R > 0) ? R -= 1 : 0; break;
+	case  'w': (G < 255) ? G += 1 : 255; break;
+	case  's': (G > 0) ? G -= 1 : 0;  break;
+	case  'e': (B < 255) ? B += 1 : 255; break;
+	case  'd': (B > 0) ? B -= 1 : 0;  break;
 	case 'r':
 	case 'R': resetCamera(); break;
 	case 32:
@@ -355,6 +362,7 @@ void keyboard(unsigned char key, int x, int y)
 	/*wyswietlanie wartosci RGB*/
 	system("cls");
 	std::cout << "R: " << R << std::endl << "G: " << G << std::endl << "B: " << B << std::endl;
+
 }
 
 void special(int key, int x, int y)
@@ -389,7 +397,6 @@ void randCol(int4 color[], int size) {
 	for (int i = 0; i < size; i++) {
 		int temp = rand() % 255;
 		color[i] = { rand() % 255, rand() % 255, rand() % 255, rand() % 255 };
-		std::cout << color[i].x << std::endl;
 	}
 }
 
@@ -415,6 +422,10 @@ void drawGlutObject(int id, GLdouble size, GLfloat X, GLfloat Y, GLfloat Z, int4
 	case 2: glutSolidSphere(size, 50, 50); break;
 	case 3: glutSolidCube(size); break;
 	case 4: glutSolidTetrahedron(); break;
+	case 5: glutSolidIcosahedron(); break;
+	case 6: glutSolidOctahedron(); break;
+	case 7: glutSolidDodecahedron(); break;
+	case 8:	glutSolidTorus(size, 10, 1, 1);
 	default:;
 	}
 
